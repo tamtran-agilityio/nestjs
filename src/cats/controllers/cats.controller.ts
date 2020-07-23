@@ -1,17 +1,18 @@
-import { Controller, Get, Post, HttpCode, Param, Body, HttpException, HttpStatus, UseFilters } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, UseFilters, Scope } from '@nestjs/common';
 import { CatDto } from '../dto/cat.dto'
 import { Cat } from '../interfaces/cat.interceptor'
 import { CatsService } from '../services/cats.service';
-import { ForbiddenException } from '../../common/forbidden.exception';
 import { HttpExceptionFilter } from '../../common/http-exception.filter';
 
-@Controller('cats')
+@Controller({
+  path: 'cats',
+  scope: Scope.REQUEST
+})
 export class CatsController {
   constructor(private catService: CatsService) { }
 
   @Get()
   async findAll(): Promise<Cat[]> {
-    throw new ForbiddenException()
     return this.catService.findAll()
   }
 
