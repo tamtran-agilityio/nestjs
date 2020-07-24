@@ -1,4 +1,4 @@
-export class CatDto {
+export class CreateCatDto {
   name: string
   age: number
   breed: string
