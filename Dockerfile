@@ -1,5 +1,5 @@
-# Use Node.js official image
-FROM node:18-alpine
+# Use Node.js official image with better crypto support
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
