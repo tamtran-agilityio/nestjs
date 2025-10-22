@@ -5,19 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import configuration from './config/configuration';
+import postgresConfig from './config/postgres.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: configuration().database.host,
-      port: configuration().database.port,
-      username: configuration().database.username,
-      password: configuration().database.password,
-      database: configuration().database.name,
-      autoLoadEntities: true,
+    ConfigModule.forRoot({ isGlobal: true, load: [postgresConfig], }),
+    // Configure TypeORM with the postgres config
+    TypeOrmModule.forRootAsync({
+      useFactory: postgresConfig,
     }),
     CqrsModule,
     UsersModule],

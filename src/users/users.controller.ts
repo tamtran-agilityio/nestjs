@@ -16,7 +16,6 @@ export class UsersController {
 
   @Get()
   async findAll(@Req() request: Request) {
-    console.log('Request Headers: ', request.query);
     const users = await this.usersService.findAll();
     return users;
   }
