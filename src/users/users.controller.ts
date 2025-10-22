@@ -15,8 +15,10 @@ export class UsersController {
   }
 
   @Get()
-  findAll(@Req() request: Request) {
-    return this.usersService.findAll();
+  async findAll(@Req() request: Request) {
+    console.log('Request Headers: ', request.query);
+    const users = await this.usersService.findAll();
+    return users;
   }
 
   @Get(':id')

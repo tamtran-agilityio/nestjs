@@ -1,5 +1,5 @@
 # Use Node.js official image with better crypto support
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Set working directory
 WORKDIR /app
@@ -8,7 +8,11 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm install
 
 # Copy source code
 COPY . .
+
+ENV CHOKIDAR_USEPOLLING=true
+
+CMD ["npm", "run", "start:dev"]
