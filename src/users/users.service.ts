@@ -13,7 +13,7 @@ export class UsersService {
   ) {}
 
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    return this.usersRepository.save(createUserDto);
   }
 
   findAll(): Promise<User[]> {
@@ -30,5 +30,9 @@ export class UsersService {
 
   remove(id: number) {
     return this.usersRepository.delete(id);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({ email });
   }
 }

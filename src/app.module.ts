@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 import postgresConfig from './config/postgres.config';
 
 @Module({
@@ -15,7 +16,8 @@ import postgresConfig from './config/postgres.config';
       useFactory: postgresConfig,
     }),
     CqrsModule,
-    UsersModule],
+    UsersModule,
+    AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
