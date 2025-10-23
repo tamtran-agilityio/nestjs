@@ -1,16 +1,25 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Header } from '@nestjs/common';
 import type { Request } from 'express';
+import * as bcrypt from 'bcrypt';
+
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService
+  ) {}
 
   @Post()
   @Header('Cache-Control', 'no-store')
-  create(@Body() createUserDto: CreateUserDto) {
+  async create(@Body() createUserDto: CreateUserDto) {
+    // Encryption of password
+    if (createUserDto.password) {
+      const saltRounds = 10;
+      createUserDto.password = await bcrypt.hash(createUserDto.password, saltRounds);
+    }
     return this.usersService.create(createUserDto);
   }
 
