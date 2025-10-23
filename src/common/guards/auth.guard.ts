@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { Request } from "express";
+import { Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -27,9 +27,9 @@ export class AuthGuard implements CanActivate {
     }
 
     private extractTokenFromHeader(request: Request): string | null {
-        const authHeader = request.headers['authorization'];
-        if (!authHeader) return null;
-        const [type, token] = authHeader.split(' ');
+        const header = request.headers['authorization'];
+        if (!header) return null;
+        const [type, token] = header.split(' ');
         return type === 'Bearer' ? token : null;
     }
 }

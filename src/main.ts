@@ -6,6 +6,20 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   // Custom query parser to handle nested query parameters
   app.set('query parser', 'extended');
+
+  // Allow-list of origins from environment variable
+  const corsOrigins = process.env.CORS_ORIGINS || 'http://localhost:3000';
+  const allowedOrigins = corsOrigins.split(',').map(origin => origin.trim());
+
+  app.enableCors({
+    origin: allowedOrigins, // accepts string[], RegExp[], or mixed
+    credentials: true, // send cookies/Authorization headers
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Content-Length', 'X-Request-Id'],
+    maxAge: 86400, // cache preflight for 24h
+  });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
