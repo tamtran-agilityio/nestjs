@@ -6,18 +6,27 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import postgresConfig from './config/postgres.config';
+import databaseConfig from './config/database.config';
+import authConfig from './config/auth.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [postgresConfig], }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [databaseConfig, authConfig],
+    }),
     // Configure TypeORM with the postgres config
     TypeOrmModule.forRootAsync({
-      useFactory: postgresConfig,
+      useFactory: databaseConfig,
     }),
     CqrsModule,
     UsersModule,
-    AuthModule],
+    // Configure AuthModule with dynamic JWT settings
+    AuthModule.forRoot({
+      secret: authConfig().secret,
+      expiresIn: authConfig().expiresIn
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

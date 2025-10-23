@@ -17,6 +17,3 @@ export default registerAs(
         retryDelay: 3000,
     }),
 );
-
-
-
