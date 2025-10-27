@@ -30,7 +30,6 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-
   @Get()
   async findAll(
     @Query('activeOnly', new DefaultValuePipe(false), ParseBooleanPipe) activeOnly: boolean,
