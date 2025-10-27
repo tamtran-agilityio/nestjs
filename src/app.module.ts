@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CommonModule } from './common/common.module';
 import databaseConfig from './config/database.config';
 import authConfig from './config/auth.config';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
@@ -22,6 +23,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
       useFactory: databaseConfig,
     }),
     CqrsModule,
+    CommonModule,
     UsersModule,
     // Configure AuthModule with dynamic JWT settings
     AuthModule.forRoot({

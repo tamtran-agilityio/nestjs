@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -23,7 +23,7 @@ async function bootstrap() {
   });
 
   // Enable global exception filter
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Enable global validation pipe
   app.useGlobalPipes(
