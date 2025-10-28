@@ -8,7 +8,10 @@ import { SecretProvider } from './constants';
 // AuthModule with dynamic configuration for JWT
 @Module({})
 export class AuthModule {
-  static forRoot(options: { secret: string; expiresIn: number }): DynamicModule {
+  static forRoot(options: {
+    secret: string;
+    expiresIn: number;
+  }): DynamicModule {
     return {
       module: AuthModule,
       imports: [
@@ -16,7 +19,7 @@ export class AuthModule {
           secret: options.secret,
           signOptions: { expiresIn: options.expiresIn },
         }),
-        UsersModule
+        UsersModule,
       ],
       controllers: [AuthController],
       providers: [AuthService, SecretProvider],

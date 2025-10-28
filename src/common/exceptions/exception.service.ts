@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { 
+import {
   DuplicateEntityException,
   EntityNotFoundException,
   InvalidCredentialsException,
   AccessDeniedException,
-  ValidationException
+  ValidationException,
 } from './custom.exceptions';
 
 @Injectable()
@@ -30,7 +30,11 @@ export class ExceptionService {
   }
 
   // Utility method to check if entity exists, throw if not
-  ensureEntityExists<T>(entity: T | null | undefined, entityName: string, id: string | number): T {
+  ensureEntityExists<T>(
+    entity: T | null | undefined,
+    entityName: string,
+    id: string | number,
+  ): T {
     if (!entity) {
       this.throwEntityNotFound(entityName, id);
     }

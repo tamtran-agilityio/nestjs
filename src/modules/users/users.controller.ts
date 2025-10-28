@@ -1,4 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, DefaultValuePipe, Header, UseFilters, NotFoundException, HttpStatus, ParseBoolPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  DefaultValuePipe,
+  Header,
+  UseFilters,
+  NotFoundException,
+  HttpStatus,
+  ParseBoolPipe,
+  Query,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import * as bcrypt from 'bcrypt';
 
@@ -15,24 +30,27 @@ import { UserByIdPipe } from 'src/common/pipes/user-by-id.pipe';
 // Add TypeOrmExceptionFilter to handle database errors globally in this controller
 @UseFilters(new TypeOrmExceptionFilter())
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @Header('Cache-Control', 'no-store')
   // @UsePipes(new ZodValidationPipe(CreateUserSchema))
   async create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
-
     // Encryption of password
     if (createUserDto.password) {
       const saltRounds = 10;
-      createUserDto.password = await bcrypt.hash(createUserDto.password, saltRounds);
+      createUserDto.password = await bcrypt.hash(
+        createUserDto.password,
+        saltRounds,
+      );
     }
     return this.usersService.create(createUserDto);
   }
 
   @Get()
   async findAll(
-    @Query('activeOnly', new DefaultValuePipe(false), ParseBooleanPipe) activeOnly: boolean,
+    @Query('activeOnly', new DefaultValuePipe(false), ParseBooleanPipe)
+    activeOnly: boolean,
     @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
   ) {
     const users = await this.usersService.findAll(activeOnly, page);
@@ -45,7 +63,10 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async update(@Param('id', new ParseIntPipe()) id, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @Param('id', new ParseIntPipe()) id,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return await this.usersService.update(id, updateUserDto);
   }
 

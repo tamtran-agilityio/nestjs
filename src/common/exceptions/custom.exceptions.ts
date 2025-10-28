@@ -43,9 +43,7 @@ export class AccessDeniedException extends HttpException {
   constructor(resource?: string) {
     super(
       {
-        message: resource 
-          ? `Access denied to ${resource}` 
-          : 'Access denied',
+        message: resource ? `Access denied to ${resource}` : 'Access denied',
         error: 'Forbidden',
         statusCode: HttpStatus.FORBIDDEN,
       },

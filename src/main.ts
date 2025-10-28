@@ -11,7 +11,7 @@ async function bootstrap() {
 
   // Allow-list of origins from environment variable
   const corsOrigins = process.env.CORS_ORIGINS || 'http://localhost:3000';
-  const allowedOrigins = corsOrigins.split(',').map(origin => origin.trim());
+  const allowedOrigins = corsOrigins.split(',').map((origin) => origin.trim());
 
   app.enableCors({
     origin: allowedOrigins, // accepts string[], RegExp[], or mixed

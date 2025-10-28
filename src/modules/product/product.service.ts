@@ -10,8 +10,10 @@ import { In } from 'typeorm';
 
 @Injectable()
 export class ProductService implements IProductService {
-  constructor(@InjectRepository(Product) private productRepository: Repository<Product>) {}
-  
+  constructor(
+    @InjectRepository(Product) private productRepository: Repository<Product>,
+  ) {}
+
   create(createProductDto: CreateProductDto) {
     const product = this.productRepository.create(createProductDto);
     return this.productRepository.save(product);
@@ -31,6 +33,7 @@ export class ProductService implements IProductService {
 
   async remove(id: string): Promise<void> {
     const result = await this.productRepository.delete(id);
-    if (result.affected === 0) throw new NotFoundException(`Product with ID ${id} not found`);
+    if (result.affected === 0)
+      throw new NotFoundException(`Product with ID ${id} not found`);
   }
 }

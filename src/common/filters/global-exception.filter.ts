@@ -1,10 +1,10 @@
-import { 
-  Catch, 
-  HttpException, 
-  ExceptionFilter, 
-  ArgumentsHost, 
+import {
+  Catch,
+  HttpException,
+  ExceptionFilter,
+  ArgumentsHost,
   HttpStatus,
-  Logger 
+  Logger,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { QueryFailedError } from 'typeorm';
@@ -26,7 +26,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    
+
     const timestamp = new Date().toISOString();
     const path = request.url;
     const method = request.method;
@@ -45,40 +45,40 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof QueryFailedError) {
       const dbError = this.handleDatabaseError(exception);
       errorResponse = { ...errorResponse, ...dbError };
-      this.logger.error(
-        `Database Error: ${dbError.message}`, 
-        { 
-          code: (exception.driverError as PostgresError)?.code,
-          detail: (exception.driverError as PostgresError)?.detail,
-          query: exception.query,
-          path,
-          method
-        }
-      );
+      this.logger.error(`Database Error: ${dbError.message}`, {
+        code: (exception.driverError as PostgresError)?.code,
+        detail: (exception.driverError as PostgresError)?.detail,
+        query: exception.query,
+        path,
+        method,
+      });
     }
     // Handle HTTP Exceptions
     else if (exception instanceof HttpException) {
       const httpError = this.handleHttpException(exception);
       errorResponse = { ...errorResponse, ...httpError };
-      this.logger.warn(
-        `HTTP Exception: ${httpError.message}`,
-        { statusCode: httpError.statusCode, path, method }
-      );
+      this.logger.warn(`HTTP Exception: ${httpError.message}`, {
+        statusCode: httpError.statusCode,
+        path,
+        method,
+      });
     }
     // Handle unknown errors
     else if (exception instanceof Error) {
       errorResponse.message = exception.message || message;
-      this.logger.error(
-        `Unhandled Error: ${exception.message}`,
-        { stack: exception.stack, path, method }
-      );
+      this.logger.error(`Unhandled Error: ${exception.message}`, {
+        stack: exception.stack,
+        path,
+        method,
+      });
     }
     // Handle any other type of exception
     else {
-      this.logger.error(
-        'Unknown Exception Type',
-        { exception: String(exception), path, method }
-      );
+      this.logger.error('Unknown Exception Type', {
+        exception: String(exception),
+        path,
+        method,
+      });
     }
 
     response.status(errorResponse.statusCode).json(errorResponse);
@@ -91,7 +91,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const constraint = pgError.constraint;
 
     if (code) {
-      const mappedError = DatabaseErrorMapper.mapError(code, detail, constraint);
+      const mappedError = DatabaseErrorMapper.mapError(
+        code,
+        detail,
+        constraint,
+      );
       return {
         statusCode: mappedError.status,
         message: mappedError.message,

@@ -16,14 +16,14 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Check if user already exists
-    const existingUser = await this.usersRepository.findOneBy({ 
-      email: createUserDto.email 
+    const existingUser = await this.usersRepository.findOneBy({
+      email: createUserDto.email,
     });
-    
+
     this.exceptionService.ensureNoDuplicate(
-      !!existingUser, 
-      'email', 
-      createUserDto.email
+      !!existingUser,
+      'email',
+      createUserDto.email,
     );
 
     return this.usersRepository.save(createUserDto);
@@ -32,7 +32,7 @@ export class UsersService {
   findAll(activeOnly: boolean, page: number): Promise<User[] | null> {
     console.log('activeOnly:', activeOnly, 'page:', page);
     const whereClause: FindOptionsWhere<User> = { isActive: activeOnly };
-    
+
     return this.usersRepository.find({
       where: whereClause,
       skip: page * 10,
@@ -47,16 +47,16 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id); // This will throw if not found
-    
+
     // If updating email, check for duplicates
     if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingUser = await this.usersRepository.findOneBy({ 
-        email: updateUserDto.email 
+      const existingUser = await this.usersRepository.findOneBy({
+        email: updateUserDto.email,
       });
       this.exceptionService.ensureNoDuplicate(
-        !!existingUser, 
-        'email', 
-        updateUserDto.email
+        !!existingUser,
+        'email',
+        updateUserDto.email,
       );
     }
 

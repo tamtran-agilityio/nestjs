@@ -1,4 +1,10 @@
-import { IsString, IsEmail, IsNumber, MinLength, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsNumber,
+  MinLength,
+  IsBoolean,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -17,4 +23,7 @@ export class CreateUserDto {
 
   @IsBoolean()
   isActive: boolean;
+
+  @IsString({ each: true })
+  roles: string[];
 }

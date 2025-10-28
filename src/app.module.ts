@@ -30,7 +30,7 @@ import { SharedModule } from './shared/shared.module';
     // Configure AuthModule with dynamic JWT settings
     AuthModule.forRoot({
       secret: authConfig().secret,
-      expiresIn: authConfig().expiresIn
+      expiresIn: authConfig().expiresIn,
     }),
     ProductModule,
     SharedModule,
@@ -40,8 +40,6 @@ import { SharedModule } from './shared/shared.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }
