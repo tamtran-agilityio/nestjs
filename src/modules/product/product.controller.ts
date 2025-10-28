@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -28,6 +30,7 @@ export class ProductController {
 
   @Get()
   @Roles(['admin', 'user'])
+  @UseInterceptors(ClassSerializerInterceptor)
   findAll() {
     return this.productService.findAll();
   }
