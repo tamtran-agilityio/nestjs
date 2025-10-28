@@ -3,23 +3,27 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { ConfigService } from './config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  
+  // Get config service instance
+  const configService = app.get(ConfigService);
+  const corsConfig = configService.getCorsConfig();
+  const appConfig = configService.getAppConfig();
+
   // Custom query parser to handle nested query parameters
   app.set('query parser', 'extended');
 
-  // Allow-list of origins from environment variable
-  const corsOrigins = process.env.CORS_ORIGINS || 'http://localhost:3000';
-  const allowedOrigins = corsOrigins.split(',').map((origin) => origin.trim());
-
+  // Enable CORS with configuration from ConfigService
   app.enableCors({
-    origin: allowedOrigins, // accepts string[], RegExp[], or mixed
-    credentials: true, // send cookies/Authorization headers
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Content-Length', 'X-Request-Id'],
-    maxAge: 86400, // cache preflight for 24h
+    origin: corsConfig.origins,
+    credentials: corsConfig.credentials,
+    methods: corsConfig.methods,
+    allowedHeaders: corsConfig.allowedHeaders,
+    exposedHeaders: corsConfig.exposedHeaders,
+    maxAge: corsConfig.maxAge,
   });
 
   // Enable global exception filter
@@ -37,6 +41,6 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(appConfig.port);
 }
 bootstrap();

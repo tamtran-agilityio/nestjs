@@ -8,7 +8,6 @@ import {
 @Injectable()
 export class ParseBooleanPipe implements PipeTransform<string, boolean> {
   transform(value: string, metadata: ArgumentMetadata): boolean {
-    console.log('ParseBooleanPipe transforming value:', value);
     if (value === undefined || value === null) {
       return false;
     }

@@ -9,8 +9,10 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProductModule } from './modules/product/product.module';
 import { CommonModule } from './common/common.module';
+import { ConfigService } from './config/config.service';
 import databaseConfig from './config/database.config';
 import authConfig from './config/auth.config';
+import corsConfig from './config/cors.config';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { SharedModule } from './shared/shared.module';
 
@@ -18,7 +20,7 @@ import { SharedModule } from './shared/shared.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, authConfig],
+      load: [databaseConfig, authConfig, corsConfig],
     }),
     // Configure TypeORM with the postgres config
     TypeOrmModule.forRootAsync({
@@ -36,7 +38,7 @@ import { SharedModule } from './shared/shared.module';
     SharedModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ConfigService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
