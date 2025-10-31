@@ -6,7 +6,7 @@ import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductService } from './interfaces/product-service.interface';
-import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
+import { ParseIntPipe } from '../../common/pipes/parse-int.pipe';
 
 @Injectable()
 export class ProductService implements IProductService {

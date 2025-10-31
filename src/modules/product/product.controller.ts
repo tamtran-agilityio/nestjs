@@ -14,15 +14,15 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { TransformInterceptor } from 'src/common/interceptors/transform.interceptor';
+import { TransformInterceptor } from '../../common/interceptors/transform.interceptor';
 import { Product } from './entities/product.entity';
-import { LoggingPerformanceInterceptor } from 'src/common/interceptors/logging-performance.interceptor';
-import { ExcludeNullInterceptor } from 'src/common/interceptors/exclude-null.interceptor';
-import { ErrorsInterceptor } from 'src/common/interceptors/errors.interceptor';
-import { RedisCachingInterceptor } from 'src/common/interceptors/redis-caching.interceptor';
-import { TrimPipe } from 'src/common/pipes/trim.pipe';
-import { UserDecorator } from 'src/common/decorators/user.decorator';
-import { Auth, LogExecution, CacheTTL } from 'src/common/decorators';
+import { LoggingPerformanceInterceptor } from '../../common/interceptors/logging-performance.interceptor';
+import { ExcludeNullInterceptor } from '../../common/interceptors/exclude-null.interceptor';
+import { ErrorsInterceptor } from '../../common/interceptors/errors.interceptor';
+import { RedisCachingInterceptor } from '../../common/interceptors/redis-caching.interceptor';
+import { TrimPipe } from '../../common/pipes/trim.pipe';
+import { UserDecorator } from '../../common/decorators/user.decorator';
+import { Auth, LogExecution, CacheTTL } from '../../common/decorators';
 
 @Controller('products')
 export class ProductController {
