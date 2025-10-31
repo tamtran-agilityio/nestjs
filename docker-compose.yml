@@ -1,23 +1,23 @@
 version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      - DATABASE_HOST=${DB_HOST}
-      - DATABASE_PORT=${DB_PORT}
-      - DATABASE_USERNAME=${DB_USER}
-      - DATABASE_PASSWORD=${DB_PASSWORD}
-      - DATABASE_NAME=${DB_NAME}
-    depends_on:
-      - postgres
-    volumes:
-      - .:/app
-      - /app/node_modules
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - DATABASE_HOST=${DB_HOST}
+  #     - DATABASE_PORT=${DB_PORT}
+  #     - DATABASE_USERNAME=${DB_USER}
+  #     - DATABASE_PASSWORD=${DB_PASSWORD}
+  #     - DATABASE_NAME=${DB_NAME}
+  #   depends_on:
+  #     - postgres
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
 
   postgres:
     image: postgres:15

@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseConfig, AuthConfig, CorsConfig, AppConfig } from './config.interface';
+import {
+  DatabaseConfig,
+  AuthConfig,
+  CorsConfig,
+  AppConfig,
+} from './config.interface';
 
 @Injectable()
 export class ConfigService {
@@ -21,15 +26,29 @@ export class ConfigService {
   }
 
   getCorsConfig(): CorsConfig {
-    const originsString = process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001';
-    const origins = originsString.split(',').map(origin => origin.trim());
+    const originsString =
+      process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001';
+    const origins = originsString.split(',').map((origin) => origin.trim());
 
     return {
       origins,
       credentials: process.env.CORS_CREDENTIALS === 'true',
-      methods: process.env.CORS_METHODS?.split(',') || ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(',') || ['Content-Type', 'Authorization'],
-      exposedHeaders: process.env.CORS_EXPOSED_HEADERS?.split(',') || ['Content-Length', 'X-Request-Id'],
+      methods: process.env.CORS_METHODS?.split(',') || [
+        'GET',
+        'POST',
+        'PUT',
+        'PATCH',
+        'DELETE',
+        'OPTIONS',
+      ],
+      allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(',') || [
+        'Content-Type',
+        'Authorization',
+      ],
+      exposedHeaders: process.env.CORS_EXPOSED_HEADERS?.split(',') || [
+        'Content-Length',
+        'X-Request-Id',
+      ],
       maxAge: parseInt(process.env.CORS_MAX_AGE || '86400', 10),
     };
   }

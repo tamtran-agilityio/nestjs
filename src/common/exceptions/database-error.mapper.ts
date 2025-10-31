@@ -51,6 +51,11 @@ export class DatabaseErrorMapper {
       status: HttpStatus.BAD_REQUEST,
       message: 'Numeric value out of range',
     },
+    '22P02': {
+      // invalid_text_representation
+      status: HttpStatus.NOT_FOUND,
+      message: 'Find not found',
+    },
   };
 
   static mapError(code: string, detail?: string, constraint?: string) {

@@ -7,7 +7,7 @@ import { ConfigService } from './config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  
+
   // Get config service instance
   const configService = app.get(ConfigService);
   const corsConfig = configService.getCorsConfig();

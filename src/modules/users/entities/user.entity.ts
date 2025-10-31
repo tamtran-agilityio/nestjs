@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Product } from 'src/modules/product/entities/product.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -34,4 +36,8 @@ export class User {
 
   @Column({ type: 'varchar', array: true, nullable: true })
   roles: string[];
+
+  // Relations
+  @OneToMany(() => Product, (product) => product.user)
+  products: Product[];
 }

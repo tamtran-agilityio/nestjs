@@ -47,4 +47,10 @@ export class ExceptionService {
       this.throwDuplicateEntity(field, value);
     }
   }
+
+  mapException(error: any): any {
+    // Here you can map different exceptions to your custom exceptions
+    // For simplicity, we will just return the error as is
+    return error;
+  }
 }

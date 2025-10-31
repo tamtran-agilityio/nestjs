@@ -27,7 +27,7 @@ import { ValidationPipe } from 'src/common/pipes/validation.pipe';
 import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
 import { ParseBooleanPipe } from 'src/common/pipes/parse-boolean.pipe';
 import { UserByIdPipe } from 'src/common/pipes/user-by-id.pipe';
-import { Roles } from 'src/common/guards/roles.decorator';
+import { Roles } from 'src/common/decorators/roles.decorator';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Public } from 'src/common/decorators/public.decorator';

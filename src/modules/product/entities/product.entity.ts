@@ -1,10 +1,12 @@
 // product.entity.ts
+import { User } from 'src/modules/users/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity('products')
@@ -32,4 +34,7 @@ export class Product {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.products, { eager: false })
+  user: User;
 }
