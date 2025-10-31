@@ -35,8 +35,6 @@ import { UserDecorator } from 'src/common/decorators/user.decorator';
 import { Auth } from 'src/common/decorators/auth.decorator';
 
 @Controller('users')
-// @UseGuards(AuthGuard, RolesGuard)
-@Auth()
 // Add TypeOrmExceptionFilter to handle database errors globally in this controller
 @UseFilters(new TypeOrmExceptionFilter())
 export class UsersController {
@@ -71,7 +69,7 @@ export class UsersController {
    * @returns Promise<User[] | null>
    */
   @Get()
-  @Roles(['admin', 'user'])
+  @Auth('admin', 'user')
   @UseInterceptors(SerializeWith(UserSerialize))
   @SerializeOptions({ type: UserSerialize })
   async findAll(

@@ -26,7 +26,6 @@ import { User } from '../users/entities/user.entity';
 import { Auth } from 'src/common/decorators/auth.decorator';
 
 @Controller('products')
-@Auth()
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
@@ -37,7 +36,7 @@ export class ProductController {
    */
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
-  @Roles(['admin'])
+  @Auth('admin')
   create(@Body(new TrimPipe()) createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
@@ -47,7 +46,7 @@ export class ProductController {
    * @returns Promise<Product[]>
    */
   @Get()
-  @Roles(['admin', 'user'])
+  @Auth('admin', 'user')
   @UseInterceptors(
     ClassSerializerInterceptor,
     TransformInterceptor<Product>,
