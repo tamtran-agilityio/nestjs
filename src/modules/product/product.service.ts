@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Product } from './entities/product.entity';
 
+import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductService } from './interfaces/product-service.interface';
@@ -35,7 +35,7 @@ export class ProductService implements IProductService {
   /**
    * Find product by user ID owner
    * @param userId number
-   * @returns 
+   * @returns
    */
   findByUserId(@Param('userId', new ParseIntPipe()) userId: number) {
     return this.productRepository.findOne({ where: { user: { id: userId } } });

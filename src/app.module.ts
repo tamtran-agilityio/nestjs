@@ -13,18 +13,29 @@ import { ConfigService } from './config/config.service';
 import databaseConfig from './config/database.config';
 import authConfig from './config/auth.config';
 import corsConfig from './config/cors.config';
+import redisConfig from './config/redis.config';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { SharedModule } from './shared/shared.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-store';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, authConfig, corsConfig],
+      load: [databaseConfig, authConfig, corsConfig, redisConfig],
     }),
     // Configure TypeORM with the postgres config
     TypeOrmModule.forRootAsync({
       useFactory: databaseConfig,
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore({
+        host: redisConfig().host,
+        port: redisConfig().port,
+        ttl: redisConfig().ttl,
+      }),
     }),
     CqrsModule,
     CommonModule,

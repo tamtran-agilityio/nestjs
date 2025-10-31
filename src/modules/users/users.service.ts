@@ -35,7 +35,7 @@ export class UsersService {
     return this.usersRepository.save(createUserDto);
   }
 
-  /**   
+  /**
    * Find all users with optional active filter and pagination
    * Find all users with optional active filter and pagination
    * @param activeOnly boolean

@@ -68,4 +68,13 @@ export class ConfigService {
   get isProduction(): boolean {
     return this.getAppConfig().nodeEnv === 'production';
   }
+
+  getRedisConfig() {
+    return {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379', 10),
+      password: process.env.REDIS_PASSWORD || undefined,
+      ttl: parseInt(process.env.REDIS_TTL || '30', 10),
+    };
+  }
 }

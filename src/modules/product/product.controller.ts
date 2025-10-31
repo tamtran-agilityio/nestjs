@@ -6,24 +6,21 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
-  Request,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Roles } from 'src/common/decorators/roles.decorator';
 import { TransformInterceptor } from 'src/common/interceptors/transform.interceptor';
 import { Product } from './entities/product.entity';
 import { LoggingPerformanceInterceptor } from 'src/common/interceptors/logging-performance.interceptor';
 import { ExcludeNullInterceptor } from 'src/common/interceptors/exclude-null.interceptor';
 import { ErrorsInterceptor } from 'src/common/interceptors/errors.interceptor';
+import { RedisCachingInterceptor } from 'src/common/interceptors/redis-caching.interceptor';
 import { TrimPipe } from 'src/common/pipes/trim.pipe';
 import { UserDecorator } from 'src/common/decorators/user.decorator';
-import { User } from '../users/entities/user.entity';
-import { Auth } from 'src/common/decorators/auth.decorator';
+import { Auth, LogExecution, CacheTTL } from 'src/common/decorators';
 
 @Controller('products')
 export class ProductController {
@@ -51,8 +48,14 @@ export class ProductController {
     ClassSerializerInterceptor,
     TransformInterceptor<Product>,
     LoggingPerformanceInterceptor,
+    RedisCachingInterceptor,
   )
-  findAll(@UserDecorator('roles') roles: string[], @UserDecorator('id') id: number) {
+  @LogExecution(false)
+  @CacheTTL(60)
+  findAll(
+    @UserDecorator('roles') roles: string[],
+    @UserDecorator('id') id: number,
+  ) {
     if (roles.includes('admin')) {
       return this.productService.findAll();
     } else {
@@ -66,10 +69,12 @@ export class ProductController {
    * @returns Promise<Product>
    */
   @Get(':id')
+  @CacheTTL(60)
   @UseInterceptors(
     LoggingPerformanceInterceptor,
     ExcludeNullInterceptor,
     ErrorsInterceptor,
+    RedisCachingInterceptor,
   )
   findOne(@Param('id') id: string) {
     return this.productService.findOne(id);
