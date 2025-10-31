@@ -15,25 +15,27 @@ import {
   ClassSerializerInterceptor,
   SerializeOptions,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserSerialize } from './serialize/user.serialize';
-import { SerializeWith } from 'src/common/interceptors/roles-serialize.interceptor';
-import { TypeOrmExceptionFilter } from 'src/common/filters/typeorm-exception.filter';
-// import { ValidationPipe } from 'src/common/pipes/validation.pipe';
+import { SerializeWith } from '../../common/interceptors/serialize.interceptor';
+import { TypeOrmExceptionFilter } from '../../common/filters/typeorm-exception.filter';
+// import { ValidationPipe } from '../../common/pipes/validation.pipe';
 import { ValidationPipe } from '@nestjs/common';
-import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
-import { ParseBooleanPipe } from 'src/common/pipes/parse-boolean.pipe';
-import { UserByIdPipe } from 'src/common/pipes/user-by-id.pipe';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { Public } from 'src/common/decorators/public.decorator';
+import { ParseIntPipe } from '../../common/pipes/parse-int.pipe';
+import { ParseBooleanPipe } from '../../common/pipes/parse-boolean.pipe';
+import { UserByIdPipe } from '../../common/pipes/user-by-id.pipe';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Public } from '../../common/decorators/public.decorator';
 import { User } from './entities/user.entity';
-import { UserDecorator } from 'src/common/decorators/user.decorator';
-import { Auth } from 'src/common/decorators/auth.decorator';
+import { UserDecorator } from '../../common/decorators/user.decorator';
+import { Auth } from '../../common/decorators/auth.decorator';
 
+@ApiTags('Users')
 @Controller('users')
 // Add TypeOrmExceptionFilter to handle database errors globally in this controller
 @UseFilters(new TypeOrmExceptionFilter())
@@ -68,6 +70,7 @@ export class UsersController {
    * @param page number
    * @returns Promise<User[] | null>
    */
+  @ApiBearerAuth('JWT-auth')
   @Get()
   @Auth('admin', 'user')
   @UseInterceptors(SerializeWith(UserSerialize))
@@ -86,6 +89,7 @@ export class UsersController {
    * @param id number
    * @returns Promise<User>
    */
+  @ApiBearerAuth('JWT-auth')
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: UserSerialize })
@@ -99,6 +103,7 @@ export class UsersController {
    * @param updateUserDto UpdateUserDto
    * @returns Promise<User>
    */
+  @ApiBearerAuth('JWT-auth')
   @Patch(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: UserSerialize })
@@ -114,6 +119,8 @@ export class UsersController {
    * @param id number
    * @returns Promise<void>
    */
+  @ApiBearerAuth('JWT-auth')
+  @Auth('admin')
   @Delete(':id')
   @UseInterceptors(SerializeWith(UserSerialize))
   async remove(@Param('id', new ParseIntPipe()) id) {

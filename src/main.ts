@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { ConfigService } from './config/config.service';
@@ -40,6 +42,31 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Set up Swagger documentation
+  const config = new DocumentBuilder()
+    .setTitle('Products API')
+    .setDescription(
+      'A comprehensive Products API with authentication, user management, and product catalog features.',
+    )
+    .setVersion('1.0')
+    .addTag('Authentication', 'User authentication and authorization endpoints')
+    .addTag('Users', 'User management endpoints')
+    .addTag('Products', 'Product management endpoints')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(appConfig.port);
 }

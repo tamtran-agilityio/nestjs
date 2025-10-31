@@ -9,6 +9,8 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
+
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -31,6 +33,7 @@ export class ProductController {
    * @param createProductDto CreateProductDto
    * @returns Promise<Product>
    */
+  @ApiBearerAuth('JWT-auth')
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @Auth('admin')
@@ -42,6 +45,7 @@ export class ProductController {
    * Find all products
    * @returns Promise<Product[]>
    */
+  @ApiBearerAuth('JWT-auth')
   @Get()
   @Auth('admin', 'user')
   @UseInterceptors(
@@ -68,6 +72,7 @@ export class ProductController {
    * @param id string
    * @returns Promise<Product>
    */
+  @ApiBearerAuth('JWT-auth')
   @Get(':id')
   @CacheTTL(60)
   @UseInterceptors(
@@ -86,6 +91,7 @@ export class ProductController {
    * @param updateProductDto UpdateProductDto
    * @returns Promise<Product>
    */
+  @ApiBearerAuth('JWT-auth')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(id, updateProductDto);
@@ -96,6 +102,7 @@ export class ProductController {
    * @param id string
    * @returns Promise<void>
    */
+  @ApiBearerAuth('JWT-auth')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productService.remove(id);

@@ -31,6 +31,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/microservices": "^11.1.7",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.1",
     "@nestjs/typeorm": "^11.0.0",
     "bcrypt": "^6.0.0",
     "cache-manager": "^7.2.4",
@@ -42,6 +43,7 @@
     "qs": "^6.14.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.27",
     "zod": "^4.1.12"
   },
@@ -87,6 +89,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapping": {
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   }
 }
