@@ -23,22 +23,30 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserSerialize } from './serialize/user.serialize';
 import { SerializeWith } from 'src/common/interceptors/roles-serialize.interceptor';
 import { TypeOrmExceptionFilter } from 'src/common/filters/typeorm-exception.filter';
-import { ValidationPipe } from 'src/common/pipes/validation.pipe';
+// import { ValidationPipe } from 'src/common/pipes/validation.pipe';
+import { ValidationPipe } from '@nestjs/common';
 import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
 import { ParseBooleanPipe } from 'src/common/pipes/parse-boolean.pipe';
 import { UserByIdPipe } from 'src/common/pipes/user-by-id.pipe';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { AuthGuard } from 'src/common/guards/auth.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Public } from 'src/common/decorators/public.decorator';
+import { User } from './entities/user.entity';
+import { UserDecorator } from 'src/common/decorators/user.decorator';
+import { Auth } from 'src/common/decorators/auth.decorator';
 
 @Controller('users')
-@UseGuards(AuthGuard, RolesGuard)
+// @UseGuards(AuthGuard, RolesGuard)
+@Auth()
 // Add TypeOrmExceptionFilter to handle database errors globally in this controller
 @UseFilters(new TypeOrmExceptionFilter())
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  /**
+   * Create a new user
+   * @param createUserDto CreateUserDto
+   * @returns Promise<User>
+   */
   @Public()
   @Post()
   @Header('Cache-Control', 'no-store')
@@ -56,6 +64,12 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  /**
+   * Find all users with optional active filter and pagination
+   * @param activeOnly boolean
+   * @param page number
+   * @returns Promise<User[] | null>
+   */
   @Get()
   @Roles(['admin', 'user'])
   @UseInterceptors(SerializeWith(UserSerialize))
@@ -69,6 +83,11 @@ export class UsersController {
     return users;
   }
 
+  /**
+   * Find one user by ID
+   * @param id number
+   * @returns Promise<User>
+   */
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: UserSerialize })
@@ -76,6 +95,12 @@ export class UsersController {
     return user;
   }
 
+  /**
+   * Update user by ID
+   * @param id number
+   * @param updateUserDto UpdateUserDto
+   * @returns Promise<User>
+   */
   @Patch(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: UserSerialize })
@@ -86,6 +111,11 @@ export class UsersController {
     return await this.usersService.update(id, updateUserDto);
   }
 
+  /**
+   * Remove user by ID
+   * @param id number
+   * @returns Promise<void>
+   */
   @Delete(':id')
   @UseInterceptors(SerializeWith(UserSerialize))
   async remove(@Param('id', new ParseIntPipe()) id) {

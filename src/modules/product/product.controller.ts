@@ -14,8 +14,6 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { AuthGuard } from 'src/common/guards/auth.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { TransformInterceptor } from 'src/common/interceptors/transform.interceptor';
 import { Product } from './entities/product.entity';
@@ -23,18 +21,31 @@ import { LoggingPerformanceInterceptor } from 'src/common/interceptors/logging-p
 import { ExcludeNullInterceptor } from 'src/common/interceptors/exclude-null.interceptor';
 import { ErrorsInterceptor } from 'src/common/interceptors/errors.interceptor';
 import { TrimPipe } from 'src/common/pipes/trim.pipe';
+import { UserDecorator } from 'src/common/decorators/user.decorator';
+import { User } from '../users/entities/user.entity';
+import { Auth } from 'src/common/decorators/auth.decorator';
 
 @Controller('products')
-@UseGuards(AuthGuard, RolesGuard)
+@Auth()
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  /**
+   * Create a new product
+   * @param createProductDto CreateProductDto
+   * @returns Promise<Product>
+   */
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @Roles(['admin'])
   create(@Body(new TrimPipe()) createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
 
+  /**
+   * Find all products
+   * @returns Promise<Product[]>
+   */
   @Get()
   @Roles(['admin', 'user'])
   @UseInterceptors(
@@ -42,10 +53,19 @@ export class ProductController {
     TransformInterceptor<Product>,
     LoggingPerformanceInterceptor,
   )
-  findAll(@Request() req) {
-    return this.productService.findAll();
+  findAll(@UserDecorator('roles') roles: string[], @UserDecorator('id') id: number) {
+    if (roles.includes('admin')) {
+      return this.productService.findAll();
+    } else {
+      return this.productService.findByUserId(id);
+    }
   }
 
+  /**
+   * Find product by ID
+   * @param id string
+   * @returns Promise<Product>
+   */
   @Get(':id')
   @UseInterceptors(
     LoggingPerformanceInterceptor,
@@ -56,11 +76,22 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
+  /**
+   * Update product by ID
+   * @param id string
+   * @param updateProductDto UpdateProductDto
+   * @returns Promise<Product>
+   */
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(id, updateProductDto);
   }
 
+  /**
+   * Remove product by ID
+   * @param id string
+   * @returns Promise<void>
+   */
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productService.remove(id);
