@@ -3,7 +3,6 @@ import {
   Controller,
   Post,
   Get,
-  Request,
   HttpCode,
   HttpStatus,
   UseGuards,
@@ -21,12 +20,20 @@ import { AuthGuard } from '../../common/guards/auth.guard';
 import { User } from '../users/entities/user.entity';
 import { UserDecorator } from '../../common/decorators/user.decorator';
 import { LoginDto } from './dto/login.dto';
+import { SignupDto } from './dto/signup.dto';
+import { SignupResponseDto } from './dto/signup-response.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('signup')
+  @HttpCode(HttpStatus.CREATED)
+  async signup(@Body() signupDto: SignupDto): Promise<SignupResponseDto> {
+    return await this.authService.signup(signupDto);
+  }
 
   @ApiOperation({ summary: 'User login' })
   @ApiBody({

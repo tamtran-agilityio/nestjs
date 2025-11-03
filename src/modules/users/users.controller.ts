@@ -9,7 +9,6 @@ import {
   DefaultValuePipe,
   Header,
   UseFilters,
-  UseGuards,
   Query,
   UseInterceptors,
   ClassSerializerInterceptor,
@@ -24,15 +23,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserSerialize } from './serialize/user.serialize';
 import { SerializeWith } from '../../common/interceptors/serialize.interceptor';
 import { TypeOrmExceptionFilter } from '../../common/filters/typeorm-exception.filter';
-// import { ValidationPipe } from '../../common/pipes/validation.pipe';
 import { ValidationPipe } from '@nestjs/common';
 import { ParseIntPipe } from '../../common/pipes/parse-int.pipe';
 import { ParseBooleanPipe } from '../../common/pipes/parse-boolean.pipe';
 import { UserByIdPipe } from '../../common/pipes/user-by-id.pipe';
-import { Roles } from '../../common/decorators/roles.decorator';
 import { Public } from '../../common/decorators/public.decorator';
-import { User } from './entities/user.entity';
-import { UserDecorator } from '../../common/decorators/user.decorator';
 import { Auth } from '../../common/decorators/auth.decorator';
 
 @ApiTags('Users')

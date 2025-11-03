@@ -43,7 +43,6 @@ export class UsersService {
    * @returns Promise<User[] | null>
    */
   findAll(activeOnly: boolean, page: number): Promise<User[] | null> {
-    console.log('activeOnly:', activeOnly, 'page:', page);
     const whereClause: FindOptionsWhere<User> = { isActive: activeOnly };
 
     return this.usersRepository.find({

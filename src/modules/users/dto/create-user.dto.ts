@@ -4,6 +4,7 @@ import {
   IsNumber,
   MinLength,
   IsBoolean,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -16,12 +17,14 @@ export class CreateUserDto {
   password: string;
 
   @IsNumber()
+  @IsOptional()
   age: number;
 
   @IsEmail()
   email: string;
 
   @IsBoolean()
+  @IsOptional()
   isActive: boolean;
 
   @IsString({ each: true })
