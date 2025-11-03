@@ -42,9 +42,7 @@ export class ProductService implements IProductService {
    * @param pagination PaginationDto
    * @returns Promise with paginated products
    */
-  async findAllPaginated(
-    pagination: PaginationDto,
-  ): Promise<{
+  async findAllPaginated(pagination: PaginationDto): Promise<{
     products: Product[];
     meta: { total: number; page: number; lastPage: number };
   }> {
@@ -84,7 +82,7 @@ export class ProductService implements IProductService {
       order: { createdAt: 'DESC' },
       ...buildPaginationOptions(page - 1, limit),
     });
-    
+
     return {
       products,
       meta: {
