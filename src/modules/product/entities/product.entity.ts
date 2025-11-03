@@ -16,6 +16,7 @@ export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Unique(['name'])
   @Column()
   name: string;
 

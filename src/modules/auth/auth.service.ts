@@ -58,7 +58,7 @@ export class AuthService {
       throw new UnauthorizedException('Incorrect email or password');
     }
     const payload = {
-      sub: user?.id,
+      id: user?.id,
       username: user?.userName,
       email: user?.email,
       roles: user?.roles,

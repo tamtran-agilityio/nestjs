@@ -7,9 +7,9 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductService } from './interfaces/product-service.interface';
 import { ParseIntPipe } from '../../common/pipes/parse-int.pipe';
-import { PaginationDto } from 'src/shared/dto/pagination.dto';
+import { PaginationDto } from '../../shared/dto/pagination.dto';
 import { IProduct } from './interfaces/product.interface';
-import { buildPaginationOptions } from 'src/shared/utils/pagination.util';
+import { buildPaginationOptions } from '../../shared/utils/pagination.util';
 
 @Injectable()
 export class ProductService implements IProductService {
@@ -77,12 +77,14 @@ export class ProductService implements IProductService {
     @Param('userId', new ParseIntPipe()) userId: number,
     pagination: PaginationDto,
   ) {
+    console.log('Fetching products for user ID:', userId);
     const { page = 1, limit = 10 } = pagination;
     const [products, total] = await this.productRepository.findAndCount({
       where: { user: { id: userId } },
       order: { createdAt: 'DESC' },
       ...buildPaginationOptions(page - 1, limit),
     });
+    
     return {
       products,
       meta: {

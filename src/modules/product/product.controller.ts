@@ -25,7 +25,7 @@ import { RedisCachingInterceptor } from '../../common/interceptors/redis-caching
 import { TrimPipe } from '../../common/pipes/trim.pipe';
 import { UserDecorator } from '../../common/decorators/user.decorator';
 import { Auth, LogExecution, CacheTTL } from '../../common/decorators';
-import { PaginationDto } from 'src/shared/dto/pagination.dto';
+import { PaginationDto } from '../../shared/dto/pagination.dto';
 
 @Controller('products')
 export class ProductController {
@@ -42,7 +42,7 @@ export class ProductController {
   @Auth('admin', 'user')
   create(
     @Body(new TrimPipe()) createProductDto: CreateProductDto,
-    @UserDecorator('sub') id: number,
+    @UserDecorator('id') id: number,
   ) {
     createProductDto.userId = id; // Set the userId to the authenticated user's ID
     return this.productService.create(createProductDto);
