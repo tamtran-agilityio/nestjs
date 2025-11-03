@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
@@ -10,7 +14,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async signup(signupDto: SignupDto): Promise<SignupResponseDto> {
     // Check if user already exists
@@ -51,7 +55,7 @@ export class AuthService {
       ? await bcrypt.compare(password, user.password)
       : false;
     if (!passwordMatches) {
-      throw new UnauthorizedException("Incorrect email or password");
+      throw new UnauthorizedException('Incorrect email or password');
     }
     const payload = {
       sub: user?.id,

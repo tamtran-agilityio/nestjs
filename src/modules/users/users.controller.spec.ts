@@ -52,5 +52,4 @@ describe('UsersController', () => {
       expect(controller).toBeDefined();
     });
   });
-  
 });

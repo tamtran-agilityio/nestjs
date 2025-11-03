@@ -1,4 +1,5 @@
 // product.entity.ts
+import { Optional } from '@nestjs/common';
 import { User } from '../../users/entities/user.entity';
 import {
   Entity,
@@ -7,6 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  Unique,
 } from 'typeorm';
 
 @Entity('products')
@@ -23,6 +25,7 @@ export class Product {
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
+  @Optional()
   @Column({ default: true })
   isActive: boolean;
 
