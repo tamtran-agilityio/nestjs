@@ -18,14 +18,9 @@ export class TransformInterceptor<T>
     context: ExecutionContext,
     next: CallHandler<T>,
   ): Observable<IResponse<T>> {
-    const response = context.switchToHttp().getResponse();
-    const statusCode = response.statusCode;
-    const message = response.statusMessage || 'OK';
     return next.handle().pipe(
       map((data) => ({
-        data,
-        message,
-        status: statusCode,
+        data
       })),
     );
   }
