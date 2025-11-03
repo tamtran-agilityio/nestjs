@@ -47,11 +47,10 @@ describe('UsersController', () => {
     service = module.get<UsersService>(UsersService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('create', () => {
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
   });
-
-  it('should have a users service', () => {
-    expect(service).toBeDefined();
-  });
+  
 });

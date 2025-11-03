@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { ExceptionService } from '../../common/exceptions/exception.service';
-import { AuthModule } from '../auth/auth.module';
+import de from 'zod/v4/locales/de.js';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -40,7 +40,6 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        AuthModule,
         {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
@@ -57,16 +56,32 @@ describe('UsersService', () => {
     exceptionService = module.get<ExceptionService>(ExceptionService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+  describe('create', () => {
+    it('should create and return a user', async () => {
+      const createUserDto = {
+        userName: 'testuser',
+        email: 'testuser@example.com',
+        password: 'securepassword',
+        age: 30,
+        isActive: true,
+        roles: ['user'],
+      };
+      const savedUser = {
+        id: 1,
+        ...createUserDto,
+      };
 
-  it('should have access to repository', () => {
-    expect(repository).toBeDefined();
-  });
+      mockUserRepository.findOneBy.mockResolvedValue(null);
+      mockUserRepository.save.mockResolvedValue(savedUser);
 
-  it('should have access to exception service', () => {
-    expect(exceptionService).toBeDefined();
+      const result = await service.create(createUserDto);
+
+      expect(result).toEqual(savedUser);
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
+        email: createUserDto.email,
+      });
+      expect(mockUserRepository.save).toHaveBeenCalledWith(createUserDto);
+    });
   });
 
   describe('findAll', () => {
@@ -95,6 +110,85 @@ describe('UsersService', () => {
         where: { isActive: true },
         skip: 0,
         take: 10,
+      });
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return a user by ID', async () => {
+      const mockUser = {
+        id: 1,
+        userName: 'user1',
+        email: 'user1@example.com',
+        isActive: true,
+      };
+
+      mockUserRepository.findOneBy.mockResolvedValue(mockUser);
+
+      const result = await service.findOne(1);
+      expect(result).toEqual(mockUser);
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+    });
+  });
+
+  describe('update', () => {
+    it('should update and return the user', async () => {
+      const mockUser = {
+        id: 1,
+        userName: 'user1',
+        email: 'user1@example.com',
+        isActive: true,
+      };
+      const updateUserDto = {
+        userName: 'updatedUser',
+      };
+      const updatedUser = {
+        ...mockUser,
+        ...updateUserDto,
+      };
+
+      mockUserRepository.findOneBy.mockResolvedValueOnce(mockUser); // for findOne
+      mockUserRepository.update.mockResolvedValue(undefined);
+      mockUserRepository.findOneBy.mockResolvedValueOnce(updatedUser); // for returning updated user
+
+      const result = await service.update(1, updateUserDto);
+      expect(result).toEqual(updatedUser);
+      expect(mockUserRepository.update).toHaveBeenCalledWith(1, updateUserDto);
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove the user', async () => {
+      const mockUser = {
+        id: 1,
+        userName: 'user1',
+        email: 'user1@example.com',
+        isActive: true,
+      };
+
+      mockUserRepository.findOneBy.mockResolvedValue(mockUser);
+      mockUserRepository.delete.mockResolvedValue(undefined);
+
+      await service.remove(1);
+      expect(mockUserRepository.delete).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('findByEmail', () => {
+    it('should return a user by email', async () => {
+      const mockUser = {
+        id: 1,
+        userName: 'user1',
+        email: 'user1@example.com',
+        isActive: true,
+      };
+
+      mockUserRepository.findOneBy.mockResolvedValue(mockUser);
+
+      const result = await service.findByEmail('user1@example.com');
+      expect(result).toEqual(mockUser);
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
+        email: 'user1@example.com',
       });
     });
   });
