@@ -34,6 +34,9 @@ $ npm install
 ## Compile and run the project
 
 ```bash
+# migration database
+$ npm run typeorm:migrate:run
+
 # development
 $ npm run start
 
