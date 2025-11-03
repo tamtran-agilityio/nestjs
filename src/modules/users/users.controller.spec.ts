@@ -52,4 +52,10 @@ describe('UsersController', () => {
       expect(controller).toBeDefined();
     });
   });
+
+  describe('service', () => {
+    it('should have a users service', () => {
+      expect(service).toBeDefined();
+    });
+  });
 });

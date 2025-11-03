@@ -7,6 +7,9 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductService } from './interfaces/product-service.interface';
 import { ParseIntPipe } from '../../common/pipes/parse-int.pipe';
+import { PaginationDto } from 'src/shared/dto/pagination.dto';
+import { IProduct } from './interfaces/product.interface';
+import { buildPaginationOptions } from 'src/shared/utils/pagination.util';
 
 @Injectable()
 export class ProductService implements IProductService {
@@ -28,8 +31,41 @@ export class ProductService implements IProductService {
    * Find all products
    * @returns Promise<Product[]>
    */
-  findAll() {
-    return this.productRepository.find();
+  async findAll(): Promise<IProduct[]> {
+    return this.productRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  /**
+   * Find all products with pagination
+   * @param pagination PaginationDto
+   * @returns Promise with paginated products
+   */
+  async findAllPaginated(
+    pagination: PaginationDto,
+  ): Promise<{
+    products: Product[];
+    meta: { total: number; page: number; lastPage: number };
+  }> {
+    const { page = 1, limit = 10 } = pagination;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.productRepository.findAndCount({
+      skip,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+    console.log('Total products:', data);
+
+    return {
+      products: data,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
   /**
@@ -37,8 +73,24 @@ export class ProductService implements IProductService {
    * @param userId number
    * @returns
    */
-  findByUserId(@Param('userId', new ParseIntPipe()) userId: number) {
-    return this.productRepository.findOne({ where: { user: { id: userId } } });
+  async findByUserId(
+    @Param('userId', new ParseIntPipe()) userId: number,
+    pagination: PaginationDto,
+  ) {
+    const { page = 1, limit = 10 } = pagination;
+    const [products, total] = await this.productRepository.findAndCount({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+      ...buildPaginationOptions(page - 1, limit),
+    });
+    return {
+      products,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
   /**

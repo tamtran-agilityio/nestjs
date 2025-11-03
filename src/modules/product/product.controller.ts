@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   UseInterceptors,
   ClassSerializerInterceptor,
   NotFoundException,
@@ -24,6 +25,7 @@ import { RedisCachingInterceptor } from '../../common/interceptors/redis-caching
 import { TrimPipe } from '../../common/pipes/trim.pipe';
 import { UserDecorator } from '../../common/decorators/user.decorator';
 import { Auth, LogExecution, CacheTTL } from '../../common/decorators';
+import { PaginationDto } from 'src/shared/dto/pagination.dto';
 
 @Controller('products')
 export class ProductController {
@@ -37,8 +39,12 @@ export class ProductController {
   @ApiBearerAuth('JWT-auth')
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
-  @Auth('admin')
-  create(@Body(new TrimPipe()) createProductDto: CreateProductDto) {
+  @Auth('admin', 'user')
+  create(
+    @Body(new TrimPipe()) createProductDto: CreateProductDto,
+    @UserDecorator('sub') id: number,
+  ) {
+    createProductDto.userId = id; // Set the userId to the authenticated user's ID
     return this.productService.create(createProductDto);
   }
 
@@ -60,11 +66,12 @@ export class ProductController {
   findAll(
     @UserDecorator('roles') roles: string[],
     @UserDecorator('id') id: number,
+    @Query() pagination: PaginationDto,
   ) {
     if (roles.includes('admin')) {
-      return this.productService.findAll();
+      return this.productService.findAllPaginated(pagination);
     } else {
-      return this.productService.findByUserId(id);
+      return this.productService.findByUserId(id, pagination);
     }
   }
 
