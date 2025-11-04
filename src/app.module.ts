@@ -1,7 +1,7 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,7 +9,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProductModule } from './modules/product/product.module';
 import { CommonModule } from './common/common.module';
-import { ConfigService } from './config/config.service';
+import { ConfigService } from '@nestjs/config';
 import databaseConfig from './config/database.config';
 import authConfig from './config/auth.config';
 import corsConfig from './config/cors.config';
@@ -27,7 +27,10 @@ import { redisStore } from 'cache-manager-redis-store';
     }),
     // Configure TypeORM with the postgres config
     TypeOrmModule.forRootAsync({
-      useFactory: databaseConfig,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) =>
+        configService.get<TypeOrmModuleOptions>('database')!,
+      inject: [ConfigService],
     }),
     CacheModule.register({
       isGlobal: true,

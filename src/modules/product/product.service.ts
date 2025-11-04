@@ -14,6 +14,7 @@ import { buildPaginationOptions } from '../../shared/utils/pagination.util';
 @Injectable()
 export class ProductService implements IProductService {
   constructor(
+    // Base repository for Product entity
     @InjectRepository(Product) private productRepository: Repository<Product>,
   ) {}
 
@@ -75,10 +76,9 @@ export class ProductService implements IProductService {
     @Param('userId', new ParseIntPipe()) userId: number,
     pagination: PaginationDto,
   ) {
-    console.log('Fetching products for user ID:', userId);
     const { page = 1, limit = 10 } = pagination;
     const [products, total] = await this.productRepository.findAndCount({
-      where: { user: { id: userId } },
+      where: { userId: userId }, // Use the actual foreign key column name for SQLite compatibility
       order: { createdAt: 'DESC' },
       ...buildPaginationOptions(page - 1, limit),
     });

@@ -20,7 +20,7 @@ export class TransformInterceptor<T>
   ): Observable<IResponse<T>> {
     return next.handle().pipe(
       map((data) => ({
-        data
+        data,
       })),
     );
   }

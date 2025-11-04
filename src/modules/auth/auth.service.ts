@@ -57,11 +57,25 @@ export class AuthService {
     if (!passwordMatches) {
       throw new UnauthorizedException('Incorrect email or password');
     }
+    // Handle roles properly - they might be stored as JSON string in SQLite
+    let roles: string[] = ['user']; // default role
+    if (user?.roles) {
+      if (Array.isArray(user.roles)) {
+        roles = user.roles;
+      } else if (typeof user.roles === 'string') {
+        try {
+          roles = JSON.parse(user.roles);
+        } catch {
+          roles = [user.roles]; // treat as single role if not valid JSON
+        }
+      }
+    }
+
     const payload = {
       id: user?.id,
       username: user?.userName,
       email: user?.email,
-      roles: user?.roles,
+      roles: roles,
     };
     return {
       access_token: await this.jwtService.signAsync(payload),

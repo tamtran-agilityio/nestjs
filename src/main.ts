@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import basicAuth from 'express-basic-auth';
 
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
@@ -43,6 +44,14 @@ async function bootstrap() {
     }),
   );
 
+  app.use(
+    ['/docs', '/docs-json'],
+    basicAuth({
+      users: { admin: 'password' }, // Replace with your credentials
+      challenge: true,
+    }),
+  );
+
   // Set up Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('Products API')
@@ -66,7 +75,7 @@ async function bootstrap() {
     )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('docs', app, documentFactory);
 
   await app.listen(appConfig.port);
 }

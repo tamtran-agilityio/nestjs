@@ -42,14 +42,15 @@ export class UsersService {
    * @param page number
    * @returns Promise<User[] | null>
    */
-  findAll(activeOnly: boolean, page: number): Promise<User[] | null> {
+  async findAll(activeOnly: boolean, page: number): Promise<User[] | null> {
     const whereClause: FindOptionsWhere<User> = { isActive: activeOnly };
 
-    return this.usersRepository.find({
+    const users = await this.usersRepository.find({
       where: whereClause,
       skip: page * 10,
       take: 10,
     });
+    return users;
   }
 
   /**

@@ -71,7 +71,25 @@ export class User {
     example: ['user', 'admin'],
     type: [String],
   })
-  @Column({ type: 'varchar', array: true, nullable: true })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'text' : 'varchar',
+    array: process.env.NODE_ENV !== 'test',
+    nullable: true,
+    transformer: {
+      to: (value: string[]) =>
+        process.env.NODE_ENV === 'test' ? JSON.stringify(value) : value,
+      from: (value: string | string[]) => {
+        if (process.env.NODE_ENV === 'test' && typeof value === 'string') {
+          try {
+            return JSON.parse(value);
+          } catch {
+            return ['user'];
+          }
+        }
+        return Array.isArray(value) ? value : ['user'];
+      },
+    },
+  })
   roles: string[];
 
   @ApiHideProperty()

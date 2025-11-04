@@ -39,6 +39,10 @@ export class Product {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  // Configure relation for SQL lite foreign key
+  @Column({ nullable: true })
+  userId: number;
+
   @ManyToOne(() => User, (user) => user.products, { eager: false })
   user: User;
 }
