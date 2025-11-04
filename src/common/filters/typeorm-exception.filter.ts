@@ -17,7 +17,7 @@ export class TypeOrmExceptionFilter implements ExceptionFilter {
     // You can inspect exception.driverError for more details about the database error
     // and tailor the message accordingly.
     let message = '';
-    let status = HttpStatus.BAD_REQUEST;
+    const status = HttpStatus.BAD_REQUEST;
     if (exception.name === 'QueryFailedError') {
       const driverError: any = exception.driverError;
       message = driverError.detail || driverError.message || driverError;

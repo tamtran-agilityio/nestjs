@@ -3,7 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
 import { ExceptionService } from '../../common/exceptions/exception.service';
-import { User } from '../users/entities/user.entity';
 import { Product } from './entities/product.entity';
 import { JwtService } from '@nestjs/jwt';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';

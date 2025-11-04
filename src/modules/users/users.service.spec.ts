@@ -4,11 +4,10 @@ import { Repository } from 'typeorm';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { ExceptionService } from '../../common/exceptions/exception.service';
-import de from 'zod/v4/locales/de.js';
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
+  // let repository: Repository<User>;
   let exceptionService: ExceptionService;
 
   const mockUserRepository = {

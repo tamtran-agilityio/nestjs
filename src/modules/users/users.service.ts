@@ -1,16 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere } from 'typeorm';
 import { User } from './entities/user.entity';
 import { ExceptionService } from '../../common/exceptions/exception.service';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private readonly usersRepository: UserRepository,
     private readonly exceptionService: ExceptionService,
   ) {}
 
@@ -32,7 +31,8 @@ export class UsersService {
       createUserDto.email,
     );
 
-    return this.usersRepository.save(createUserDto);
+    const user = await this.usersRepository.create(createUserDto);
+    return this.usersRepository.save(user);
   }
 
   /**
@@ -95,6 +95,9 @@ export class UsersService {
    */
   async remove(id: number): Promise<void> {
     const user = await this.findOne(id); // This will throw if not found
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     await this.usersRepository.delete(id);
   }
 

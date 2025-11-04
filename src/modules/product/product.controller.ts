@@ -45,8 +45,6 @@ export class ProductController {
     @UserDecorator('id') id: number,
   ) {
     createProductDto.userId = id; // Set the userId to the authenticated user's ID
-    
-    console.log('Products for user ID', id, ':', createProductDto);
     return this.productService.create(createProductDto);
   }
 

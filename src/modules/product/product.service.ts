@@ -55,7 +55,6 @@ export class ProductService implements IProductService {
       take: limit,
       order: { createdAt: 'DESC' },
     });
-    console.log('Total products:', data);
 
     return {
       products: data,

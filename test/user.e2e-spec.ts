@@ -111,7 +111,7 @@ describe('UsersController (e2e)', () => {
     expect(loginResponse.status).toBe(200);
     expect(loginResponse.body.access_token).toBeDefined();
 
-    const token = loginResponse.body.access_token;
+    const token = loginResponse.body.access_token || '';
 
     // Verify get profile
     const profileResponse = await request(app.getHttpServer())
@@ -128,6 +128,7 @@ describe('UsersController (e2e)', () => {
 
     expect(protectedResponse.status).toBe(200);
   });
+
   afterAll(async () => {
     await app.close();
   });

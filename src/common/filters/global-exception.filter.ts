@@ -31,8 +31,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const path = request.url;
     const method = request.method;
 
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
+    const status = HttpStatus.INTERNAL_SERVER_ERROR;
+    const message = 'Internal server error';
     let errorResponse: any = {
       statusCode: status,
       message,
@@ -118,7 +118,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (typeof response === 'object' && response !== null) {
       return {
         statusCode: status,
-        ...(response as object),
+        ...response,
       };
     }
 

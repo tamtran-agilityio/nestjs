@@ -3,17 +3,13 @@ import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
 import request from 'supertest';
 import { faker } from '@faker-js/faker';
-import { AppModule } from '../src/app.module';
 import { ProductService } from '../src/modules/product/product.service';
-import authConfig from '../src/config/auth.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from '../src/modules/users/users.module';
 import { AuthModule } from '../src/modules/auth/auth.module';
 import { CommonModule } from '../src/common/common.module';
-import { UsersService } from '../src/modules/users/users.service';
 import { User } from '../src/modules/users/entities/user.entity';
 import { Product } from '../src/modules/product/entities/product.entity';
 import { ProductModule } from '../src/modules/product/product.module';
@@ -70,9 +66,7 @@ describe('ProductsController (e2e)', () => {
     };
 
     // Sign up smoke test user
-    await request(app.getHttpServer())
-      .post('/auth/signup')
-      .send(smokeTestUser);
+    await request(app.getHttpServer()).post('/auth/signup').send(smokeTestUser);
 
     // Login to get token
     const loginDto = {
@@ -125,6 +119,7 @@ describe('ProductsController (e2e)', () => {
 
     expect(createResponse.status).toBe(201);
 
+    // Verify the created product can be retrieved
     const responseDetails = await request(app.getHttpServer())
       .get(`/products/${createResponse.body.id}`)
       .set('Authorization', `Bearer ${token}`);
@@ -134,18 +129,95 @@ describe('ProductsController (e2e)', () => {
       expect.objectContaining(createProductDto),
     );
 
+    // Now test the /products GET endpoint
     const response = await request(app.getHttpServer())
       .get('/products?limit=10&page=1')
       .set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body.data.products)).toBe(true);
-    console.log('Response body:', response.body.data.products);
-    // expect(response.body.data.products).toEqual([createResponse.body]);
+    expect(response.body.data.products).toEqual([createResponse.body]);
+  });
 
-    // const responses = await request(app.getHttpServer())
-    //   .get('/products')
-    //   .set('Authorization', `Bearer ${token}`);
-    //   console.log('responses body:', responses.body.data.products);
+  describe('PATCH /products/:id', () => {
+    // Implement tests for updating a product
+    it('should update product details', async () => {
+      const token = await initUserAndGetToken();
+      const randomName = faker.person.fullName();
+      const createProductDto = {
+        name: randomName,
+        description: 'Description for Product 1',
+        price: 100,
+      };
+
+      const createResponse = await request(app.getHttpServer())
+        .post('/products')
+        .set('Authorization', `Bearer ${token}`)
+        .send(createProductDto);
+
+      expect(createResponse.status).toBe(201);
+
+      const updateProductDto = {
+        name: faker.person.fullName(),
+        description: 'Updated Description',
+        price: 150,
+      };
+
+      const response = await request(app.getHttpServer())
+        .patch(`/products/${createResponse.body.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(updateProductDto);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(expect.objectContaining(updateProductDto));
+    });
+  });
+
+  describe('DELETE /products/:id', () => {
+    // Implement tests for deleting a product
+    it('should delete product', async () => {
+      const token = await initUserAndGetToken();
+      const randomName = faker.person.fullName();
+      const createProductDto = {
+        name: randomName,
+        description: 'Description for Product to be deleted',
+        price: 200,
+      };
+
+      const createResponse = await request(app.getHttpServer())
+        .post('/products')
+        .set('Authorization', `Bearer ${token}`)
+        .send(createProductDto);
+
+      expect(createResponse.status).toBe(201);
+
+      const response = await request(app.getHttpServer())
+        .delete(`/products/${createResponse.body.id}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+
+      // Verify deletion
+      const verifyResponse = await request(app.getHttpServer())
+        .get(`/products/${createResponse.body.id}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(verifyResponse.status).toBe(404);
+    });
+
+    it('should return 404 when deleting non-existent product', async () => {
+      const token = await initUserAndGetToken();
+      const nonExistentProductId = 'non-existent-id';
+
+      const response = await request(app.getHttpServer())
+        .delete(`/products/${nonExistentProductId}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(404);
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });

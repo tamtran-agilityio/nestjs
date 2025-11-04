@@ -88,7 +88,7 @@ export class UsersController {
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: UserSerialize })
-  async findOne(@Param('id', UserByIdPipe) user) {
+  findOne(@Param('id', UserByIdPipe) user) {
     return user;
   }
 

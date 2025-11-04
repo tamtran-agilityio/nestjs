@@ -20,7 +20,6 @@ export class LoggingPerformanceInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const method = request.method;
     const url = request.url;
-    console.log(`Incoming Request logExecution: ${logExecution}`);
 
     const result = await next.handle().pipe(
       tap(() => {
