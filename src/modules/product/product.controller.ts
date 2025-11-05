@@ -8,7 +8,6 @@ import {
   Delete,
   Query,
   UseInterceptors,
-  ClassSerializerInterceptor,
   NotFoundException,
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -37,7 +36,6 @@ export class ProductController {
    * @returns Promise<Product>
    */
   @ApiBearerAuth('JWT-auth')
-  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @Auth('admin', 'user')
   create(
@@ -56,7 +54,6 @@ export class ProductController {
   @Get()
   @Auth('admin', 'user')
   @UseInterceptors(
-    ClassSerializerInterceptor,
     TransformInterceptor<Product>,
     LoggingPerformanceInterceptor,
     RedisCachingInterceptor,

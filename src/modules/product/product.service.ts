@@ -8,7 +8,6 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductService } from './interfaces/product-service.interface';
 import { ParseIntPipe } from '../../common/pipes/parse-int.pipe';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
-import { IProduct } from './interfaces/product.interface';
 import { buildPaginationOptions } from '../../shared/utils/pagination.util';
 
 @Injectable()
@@ -32,7 +31,7 @@ export class ProductService implements IProductService {
    * Find all products
    * @returns Promise<Product[]>
    */
-  async findAll(): Promise<IProduct[]> {
+  async findAll(): Promise<Product[]> {
     return this.productRepository.find({
       order: { createdAt: 'DESC' },
     });

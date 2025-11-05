@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
+import { ProductsResolver } from './products.resolver';
 import { Product } from './entities/product.entity';
 import { AuthModule } from '../auth/auth.module';
 import authConfig from '../../config/auth.config';
@@ -17,6 +18,6 @@ import authConfig from '../../config/auth.config';
     AuthModule,
   ],
   controllers: [ProductController],
-  providers: [ProductService],
+  providers: [ProductService, ProductsResolver],
 })
 export class ProductModule {}
