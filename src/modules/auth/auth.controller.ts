@@ -23,6 +23,7 @@ import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import { SignupResponseDto } from './dto/signup-response.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -66,6 +67,7 @@ export class AuthController {
       path: '/auth/login',
     },
   })
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
@@ -102,7 +104,7 @@ export class AuthController {
       path: '/auth/profile',
     },
   })
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@UserDecorator() user: User): User {
     return user;

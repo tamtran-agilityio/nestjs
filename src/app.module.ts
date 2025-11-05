@@ -2,7 +2,13 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
 
+import { GqlAuthGuard } from './common/guards/gql-auth.guard';
+import { GqlRolesGuard } from './common/guards/gql-roles.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
@@ -44,6 +50,12 @@ import { redisStore } from 'cache-manager-redis-store';
     }),
     CqrsModule,
     CommonModule,
+    // Configure JwtModule globally for guards
+    JwtModule.register({
+      global: true,
+      secret: authConfig().secret,
+      signOptions: { expiresIn: authConfig().expiresIn },
+    }),
     UsersModule,
     // Configure AuthModule with dynamic JWT settings
     AuthModule.forRoot({
@@ -51,10 +63,35 @@ import { redisStore } from 'cache-manager-redis-store';
       expiresIn: authConfig().expiresIn,
     }),
     ProductModule,
-    SharedModule,
+    // SharedModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      path: '/graphql',
+      include: [UsersModule, ProductModule, AuthModule],
+      formatError: (err) => {
+        console.error('[GraphQL Error]', err);
+        return err;
+      },
+      subscriptions: {
+        'graphql-ws': {
+          onConnect: async (ctx) => {
+            const token = (
+              ctx.connectionParams?.Authorization as string
+            )?.replace(/^Bearer\s+/i, '');
+            (ctx.extra as any).token = token;
+          },
+        },
+      },
+      context: ({ req, extra }) => ({ req, extra }),
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: GqlAuthGuard }, // auth first
+    { provide: APP_GUARD, useClass: GqlRolesGuard }, // then roles
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -31,7 +31,7 @@ async function bootstrap() {
   });
 
   // Enable global exception filter
-  app.useGlobalFilters(new GlobalExceptionFilter());
+  // app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Enable global validation pipe
   app.useGlobalPipes(
@@ -84,6 +84,7 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory);
 
+  app.enableShutdownHooks();
   await app.listen(appConfig.port);
 }
 bootstrap();
