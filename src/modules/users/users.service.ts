@@ -59,7 +59,9 @@ export class UsersService {
    * @returns Promise<User>
    */
   async findOne(id: number): Promise<User> {
+    console.log('Finding user with ID:', id);
     const user = await this.usersRepository.findOneBy({ id });
+    console.log('Found user:', user);
     return this.exceptionService.ensureEntityExists(user, 'User', id);
   }
 
@@ -107,7 +109,7 @@ export class UsersService {
    * @returns Promise<User | null>
    */
   async findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOneBy({ email });
+    return this.usersRepository.findByEmail(email);
   }
 
   /**

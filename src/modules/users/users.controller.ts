@@ -11,7 +11,6 @@ import {
   UseFilters,
   Query,
   UseInterceptors,
-  ClassSerializerInterceptor,
   SerializeOptions,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -45,7 +44,6 @@ export class UsersController {
   @Public()
   @Post()
   @Header('Cache-Control', 'no-store')
-  @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: UserSerialize })
   async create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
     // Encryption of password
@@ -75,6 +73,7 @@ export class UsersController {
     activeOnly: boolean,
     @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
   ) {
+    console.log('Fetching all users with filters:', { activeOnly, page });
     const users = await this.usersService.findAll(activeOnly, page);
     return users;
   }
@@ -86,7 +85,6 @@ export class UsersController {
    */
   @ApiBearerAuth('JWT-auth')
   @Get(':id')
-  @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: UserSerialize })
   findOne(@Param('id', UserByIdPipe) user) {
     return user;
@@ -100,7 +98,6 @@ export class UsersController {
    */
   @ApiBearerAuth('JWT-auth')
   @Patch(':id')
-  @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: UserSerialize })
   async update(
     @Param('id', new ParseIntPipe()) id,

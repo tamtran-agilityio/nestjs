@@ -7,7 +7,7 @@ import { ExceptionService } from '../../common/exceptions/exception.service';
 
 describe('UsersService', () => {
   let service: UsersService;
-  // let repository: Repository<User>;
+  let repository: Repository<User>;
   let exceptionService: ExceptionService;
 
   const mockUserRepository = {

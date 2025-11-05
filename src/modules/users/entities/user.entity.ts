@@ -8,14 +8,24 @@ import {
 } from 'typeorm';
 import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
+import {
+  ObjectType,
+  Field,
+  ID,
+  HideField,
+  GraphQLISODateTime,
+} from '@nestjs/graphql';
+
 import { Product } from '../../product/entities/product.entity';
 
+@ObjectType()
 @Entity({ name: 'users' })
 export class User {
   @ApiProperty({
     description: 'Unique identifier for the user',
     example: 1,
   })
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -23,11 +33,13 @@ export class User {
     description: 'Unique username',
     example: 'john_doe',
   })
+  @Field()
   @Column({ unique: true })
   userName: string;
 
   @ApiHideProperty()
   @Exclude()
+  @HideField()
   @Column()
   password: string;
 
@@ -35,6 +47,7 @@ export class User {
     description: 'User age',
     example: 25,
   })
+  @Field()
   @Column()
   age: number;
 
@@ -42,6 +55,7 @@ export class User {
     description: 'Unique email address',
     example: 'john@example.com',
   })
+  @Field()
   @Column({ unique: true })
   email: string;
 
@@ -49,6 +63,7 @@ export class User {
     description: 'Account creation timestamp',
     example: '2024-10-31T10:00:00.000Z',
   })
+  @Field(() => GraphQLISODateTime)
   @CreateDateColumn()
   createdAt: Date;
 
@@ -56,6 +71,7 @@ export class User {
     description: 'Last update timestamp',
     example: '2024-10-31T10:00:00.000Z',
   })
+  @Field(() => GraphQLISODateTime)
   @UpdateDateColumn()
   updatedAt: Date;
 
@@ -63,6 +79,7 @@ export class User {
     description: 'Whether the user account is active',
     example: true,
   })
+  @Field()
   @Column({ default: true })
   isActive: boolean;
 
@@ -71,6 +88,7 @@ export class User {
     example: ['user', 'admin'],
     type: [String],
   })
+  @Field(() => [String])
   @Column({
     type: process.env.NODE_ENV === 'test' ? 'text' : 'varchar',
     array: process.env.NODE_ENV !== 'test',
@@ -93,6 +111,8 @@ export class User {
   roles: string[];
 
   @ApiHideProperty()
+  @HideField()
+  @Field(() => [Product], { nullable: true })
   @OneToMany(() => Product, (product) => product.user)
   products: Product[];
 }

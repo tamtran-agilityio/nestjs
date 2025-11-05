@@ -7,7 +7,7 @@ export interface IRepository<T> {
   find(options?: any): Promise<T[]>;
   update(criteria: any, partialEntity: Partial<T>): Promise<any>;
   delete(criteria: any): Promise<any>;
-  findByEmail(email: FindOptionsWhere<T>): Promise<T | null>;
+  findByEmail(email: string): Promise<T | null>;
   findAll(): Promise<T[]>;
   findOneById(id: number): Promise<T | null>;
 }

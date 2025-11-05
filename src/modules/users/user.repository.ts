@@ -1,4 +1,4 @@
-import { Repository, FindOptionsWhere } from 'typeorm';
+import { Repository, FindOptionsWhere, ILike } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { IRepository } from './repository.interface';
@@ -9,8 +9,8 @@ export class UserRepository implements IRepository<User> {
     private readonly repository: Repository<User>,
   ) {}
 
-  async findByEmail(email: FindOptionsWhere<User>): Promise<User | null> {
-    return this.repository.findOneBy(email);
+  async findByEmail(email: string): Promise<User | null> {
+    return this.repository.findOne({ where: { email } });
   }
 
   async findAll(): Promise<User[]> {
@@ -30,7 +30,10 @@ export class UserRepository implements IRepository<User> {
   }
 
   async findOneBy(where: FindOptionsWhere<User>): Promise<User | null> {
-    return this.repository.findOneBy(where);
+    const user = await this.repository.findOne({
+      where: where.email ? { email: ILike(where.email) } : where,
+    });
+    return user;
   }
 
   async find(options?: any): Promise<User[]> {
