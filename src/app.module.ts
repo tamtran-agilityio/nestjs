@@ -25,6 +25,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { SharedModule } from './shared/shared.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { redisStore } from 'cache-manager-redis-store';
       },
       context: ({ req, extra }) => ({ req, extra }),
     }),
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [
