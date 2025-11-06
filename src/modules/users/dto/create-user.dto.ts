@@ -5,8 +5,10 @@ import {
   MinLength,
   IsBoolean,
   IsOptional,
+  IsEnum,
 } from 'class-validator';
 import { InputType, Field } from '@nestjs/graphql';
+import { Role } from '../../../common/enums/role.enum';
 
 @InputType()
 export class CreateUserDto {
@@ -34,7 +36,8 @@ export class CreateUserDto {
   @IsOptional()
   isActive: boolean;
 
-  @Field(() => [String], { nullable: true })
-  @IsString({ each: true })
-  roles: string[];
+  @Field(() => [Role], { nullable: true })
+  @IsEnum(Role, { each: true })
+  @IsOptional()
+  roles: Role[];
 }

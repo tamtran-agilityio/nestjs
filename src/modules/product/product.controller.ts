@@ -25,6 +25,7 @@ import { TrimPipe } from '../../common/pipes/trim.pipe';
 import { UserDecorator } from '../../common/decorators/user.decorator';
 import { Auth, LogExecution, CacheTTL } from '../../common/decorators';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
+import { Role } from '../../common/enums/role.enum';
 
 @Controller('products')
 export class ProductController {
@@ -37,7 +38,7 @@ export class ProductController {
    */
   @ApiBearerAuth('JWT-auth')
   @Post()
-  @Auth('admin', 'user')
+  @Auth(Role.ADMIN, Role.USER)
   create(
     @Body(new TrimPipe()) createProductDto: CreateProductDto,
     @UserDecorator('id') id: number,
@@ -52,7 +53,7 @@ export class ProductController {
    */
   @ApiBearerAuth('JWT-auth')
   @Get()
-  @Auth('admin', 'user')
+  @Auth(Role.ADMIN, Role.USER)
   @UseInterceptors(
     TransformInterceptor<Product>,
     LoggingPerformanceInterceptor,

@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
 import { SignupResponseDto } from './dto/signup-response.dto';
+import { Role } from '../../common/enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +35,7 @@ export class AuthService {
       password: hashedPassword,
       age: 18,
       isActive: true,
-      roles: ['user'],
+      roles: [Role.USER],
     });
 
     if (!newUser) {
@@ -58,7 +59,7 @@ export class AuthService {
       throw new UnauthorizedException('Incorrect email or password');
     }
     // Handle roles properly - they might be stored as JSON string in SQLite
-    let roles: string[] = ['user']; // default role
+    let roles: Role[] = [Role.USER]; // default role
     if (user?.roles) {
       if (Array.isArray(user.roles)) {
         roles = user.roles;
@@ -66,7 +67,7 @@ export class AuthService {
         try {
           roles = JSON.parse(user.roles);
         } catch {
-          roles = [user.roles]; // treat as single role if not valid JSON
+          roles = [user.roles as Role]; // treat as single role if not valid JSON
         }
       }
     }

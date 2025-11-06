@@ -28,6 +28,7 @@ import { ParseBooleanPipe } from '../../common/pipes/parse-boolean.pipe';
 import { UserByIdPipe } from '../../common/pipes/user-by-id.pipe';
 import { Public } from '../../common/decorators/public.decorator';
 import { Auth } from '../../common/decorators/auth.decorator';
+import { Role } from '../../common/enums/role.enum';
 
 @ApiTags('Users')
 @Controller('users')
@@ -65,7 +66,7 @@ export class UsersController {
    */
   @ApiBearerAuth('JWT-auth')
   @Get()
-  @Auth('admin', 'user')
+  @Auth(Role.ADMIN, Role.USER)
   @UseInterceptors(SerializeWith(UserSerialize))
   @SerializeOptions({ type: UserSerialize })
   async findAll(
@@ -73,7 +74,6 @@ export class UsersController {
     activeOnly: boolean,
     @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
   ) {
-    console.log('Fetching all users with filters:', { activeOnly, page });
     const users = await this.usersService.findAll(activeOnly, page);
     return users;
   }
@@ -112,7 +112,7 @@ export class UsersController {
    * @returns Promise<void>
    */
   @ApiBearerAuth('JWT-auth')
-  @Auth('admin')
+  @Auth(Role.ADMIN)
   @Delete(':id')
   @UseInterceptors(SerializeWith(UserSerialize))
   async remove(@Param('id', new ParseIntPipe()) id) {

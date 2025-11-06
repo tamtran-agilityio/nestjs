@@ -18,6 +18,7 @@ import {
 } from '@nestjs/graphql';
 
 import { Product } from '../../product/entities/product.entity';
+import { Role } from '../../../common/enums/role.enum';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -87,30 +88,31 @@ export class User {
 
   @ApiProperty({
     description: 'User roles',
-    example: ['user', 'admin'],
-    type: [String],
+    example: [Role.USER, Role.ADMIN],
+    enum: Role,
+    isArray: true,
   })
-  @Field(() => [String])
+  @Field(() => [Role])
   @Column({
     type: process.env.NODE_ENV === 'test' ? 'text' : 'varchar',
     array: process.env.NODE_ENV !== 'test',
     nullable: true,
     transformer: {
-      to: (value: string[]) =>
+      to: (value: Role[]) =>
         process.env.NODE_ENV === 'test' ? JSON.stringify(value) : value,
-      from: (value: string | string[]) => {
+      from: (value: string | Role[]) => {
         if (process.env.NODE_ENV === 'test' && typeof value === 'string') {
           try {
             return JSON.parse(value);
           } catch {
-            return ['user'];
+            return [Role.USER];
           }
         }
-        return Array.isArray(value) ? value : ['user'];
+        return Array.isArray(value) ? value : [Role.USER];
       },
     },
   })
-  roles: string[];
+  roles: Role[];
 
   @ApiHideProperty()
   @HideField()
