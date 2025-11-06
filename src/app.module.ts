@@ -26,6 +26,7 @@ import { SharedModule } from './shared/shared.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
 import { HealthModule } from './modules/health/health.module';
+import { TrimDirectiveTransformer } from './common/pipes/trim-directive.transformer';
 
 @Module({
   imports: [
@@ -84,6 +85,7 @@ import { HealthModule } from './modules/health/health.module';
           },
         },
       },
+      "transformSchema": (schema) =>  TrimDirectiveTransformer(schema, 'trim'),
       context: ({ req, extra }) => ({ req, extra }),
     }),
     HealthModule,

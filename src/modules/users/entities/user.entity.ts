@@ -14,6 +14,7 @@ import {
   ID,
   HideField,
   GraphQLISODateTime,
+  Directive,
 } from '@nestjs/graphql';
 
 import { Product } from '../../product/entities/product.entity';
@@ -34,6 +35,7 @@ export class User {
     example: 'john_doe',
   })
   @Field()
+  @Directive('@trim')
   @Column({ unique: true })
   userName: string;
 
