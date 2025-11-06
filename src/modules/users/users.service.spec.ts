@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { ExceptionService } from '../../common/exceptions/exception.service';
+import { Role } from 'src/common/enums/role.enum';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -63,7 +64,7 @@ describe('UsersService', () => {
         password: 'securepassword',
         age: 30,
         isActive: true,
-        roles: ['user'],
+        roles: [Role.USER],
       };
       const savedUser = {
         id: 1,

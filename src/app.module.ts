@@ -22,6 +22,7 @@ import authConfig from './config/auth.config';
 import corsConfig from './config/cors.config';
 import redisConfig from './config/redis.config';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { GraphQLLoggingPlugin } from './common/plugins/graphql-logging.plugin';
 import { SharedModule } from './shared/shared.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
@@ -71,6 +72,7 @@ import { TrimDirectiveTransformer } from './common/pipes/trim-directive.transfor
       autoSchemaFile: true,
       path: '/graphql',
       include: [UsersModule, ProductModule, AuthModule],
+      plugins: [new GraphQLLoggingPlugin()],
       formatError: (err) => {
         console.error('[GraphQL Error]', err);
         return err;
@@ -85,7 +87,6 @@ import { TrimDirectiveTransformer } from './common/pipes/trim-directive.transfor
           },
         },
       },
-      "transformSchema": (schema) =>  TrimDirectiveTransformer(schema, 'trim'),
       context: ({ req, extra }) => ({ req, extra }),
     }),
     HealthModule,
@@ -93,12 +94,16 @@ import { TrimDirectiveTransformer } from './common/pipes/trim-directive.transfor
   controllers: [AppController],
   providers: [
     AppService,
+    GraphQLLoggingPlugin,
     { provide: APP_GUARD, useClass: GqlAuthGuard }, // auth first
     { provide: APP_GUARD, useClass: GqlRolesGuard }, // then roles
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer
+      .apply(LoggerMiddleware)
+      .exclude('/graphql') // Exclude GraphQL endpoint from HTTP logging
+      .forRoutes('*');
   }
 }

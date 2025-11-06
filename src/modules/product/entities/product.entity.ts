@@ -1,5 +1,11 @@
 // product.entity.ts
-import { ObjectType, Field, ID, GraphQLISODateTime, Directive } from '@nestjs/graphql';
+import {
+  ObjectType,
+  Field,
+  ID,
+  GraphQLISODateTime,
+  Directive,
+} from '@nestjs/graphql';
 import {
   Entity,
   PrimaryGeneratedColumn,

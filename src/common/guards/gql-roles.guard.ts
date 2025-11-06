@@ -33,30 +33,26 @@ export class GqlRolesGuard implements CanActivate {
       gqlContext.getClass(),
     ]);
 
-    console.log('GqlRolesGuard - isPublic: ))))', isPublic);
     if (isPublic) {
       return true;
     }
-    console.log('GqlRolesGuard - isPublic**:', isPublic);
+    const token = this.extractTokenFromHeader(request);
+    if (!token) {
+      throw new UnauthorizedException('Access token is required');
+    }
 
-    // const token = this.extractTokenFromHeader(request);
-
-    // if (!token) {
-    //   throw new UnauthorizedException('Access token is required');
-    // }
-
-    // try {
-    //   const payload = await this.jwtService.verifyAsync(token, {
-    //     secret: authConfig().secret,
-    //   });
-    //   request['user'] = payload;
-    const gqlCtx = GqlExecutionContext.create(context);
-    const user = gqlCtx.getContext().req?.user;
-    const userRoles = user?.roles || [];
-    return required.some((r) => userRoles.includes(r));
-    // } catch {
-    //   throw new UnauthorizedException('Invalid or expired access token');
-    // }
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: authConfig().secret,
+      });
+      request['user'] = payload;
+      const gqlCtx = GqlExecutionContext.create(context);
+      const user = gqlCtx.getContext().req?.user;
+      const userRoles = user?.roles || [];
+      return required.some((r) => userRoles.includes(r));
+    } catch {
+      throw new UnauthorizedException('Invalid or expired access token');
+    }
   }
 
   private extractTokenFromHeader(request: Request): string | null {
