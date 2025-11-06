@@ -14,6 +14,7 @@ import { UsersService } from '../src/modules/users/users.service';
 import { User } from '../src/modules/users/entities/user.entity';
 import { Product } from '../src/modules/product/entities/product.entity';
 import authConfig from '../src/config/auth.config';
+import { Role } from 'src/common/enums/role.enum';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication<App>;
@@ -61,7 +62,7 @@ describe('UsersController (e2e)', () => {
         password: 'securepassword',
         age: 30,
         isActive: true,
-        roles: ['user'],
+        roles: [Role.USER],
         createdAt: new Date(),
         updatedAt: new Date(),
         products: [],
@@ -73,7 +74,7 @@ describe('UsersController (e2e)', () => {
         password: 'securepassword',
         age: 25,
         isActive: true,
-        roles: ['user'],
+        roles: [Role.USER],
         createdAt: new Date(),
         updatedAt: new Date(),
         products: [],
